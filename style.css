@@ -6,9 +6,20 @@
 :root{
   --dark-blue: #363f5f;
 }
+html{
+  font-size: 93.75%;
+}
 body{
   background: #f0f2f5;
   font-family: 'Poppins', sans-serif;
+}
+.sr-only{
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0px;
+  overflow:hidden;
+  border-width: -1px;
 }
 .container{
   width: min(90vw, 800px);
@@ -46,6 +57,9 @@ header h1{
 .card h3{
   font-weight: normal;
   font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .card p{
   font-size: 2rem;
@@ -55,6 +69,17 @@ header h1{
 .card.total{
   background: #49aa26;
   color: white;
+}
+a{
+  color: #49aa26;
+  text-decoration: none;
+}
+a:hover{
+  color: #3dd705;
+}
+.button.new{
+  display: inline-block;
+  margin-bottom: 24px;
 }
 #data-table{
   width: 100%;
@@ -82,6 +107,10 @@ table tbody tr td:first-child{
   padding: 1rem 2rem ;
   font-weight: normal;
 }
+table thead tr th:last-child, 
+table tbody tr td:last-child{
+  border-radius:0 0.25rem .25rem 0 ;
+}
 td.description{
   color: var(--dark-blue);
 }
@@ -91,10 +120,20 @@ td.income{
 td.expense{
   color: #e92929;
 }
-
 footer{
   text-align: center;
   padding: 4rem 0 2rem;
   color: var(--dark-blue);
   opacity: .6;
+}
+
+@media screen and (min-width:800px) {
+  html{
+    font-size: 87.5%;
+  }
+  #balance{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
 }
