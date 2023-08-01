@@ -37,16 +37,27 @@ const transactions = [
 
 const Transaction = {
   incomes(){
-    return "Giro"
+    let income = 0;
+    transactions.forEach(transaction => {
+      if(transaction.amount > 0){
+        income += transaction.amount;
+      }
+    })
+    return income;
   }, 
-  expenses(){
+  expenses(){  
+    let expense = 0;
+    transactions.forEach(transaction => {
+      if(transaction.amount < 0){
+        expense += transaction.amount;
+      }
+    })
+    return expense;    
     return "Girosan"
   },
   total(){
-    return "Gissoran"
+    return Transaction.incomes() + Transaction.expenses();
   }
-
-
 }
 
 const DOM = {
@@ -78,9 +89,9 @@ const DOM = {
   }, 
 
   updateBalance(){
-    document.getElementById('incomeDisplay').innerHTML= Transaction.incomes()
-    document.getElementById('expenseDisplay').innerHTML=Transaction.expenses()
-    document.getElementById('totalDisplay').innerHTML=Transaction.total()
+    document.getElementById('incomeDisplay').innerHTML= Utils.formatCurrancy(Transaction.incomes());
+    document.getElementById('expenseDisplay').innerHTML=Utils.formatCurrancy(Transaction.expenses())
+    document.getElementById('totalDisplay').innerHTML=Utils.formatCurrancy(Transaction.total())
   }
 }
 
