@@ -22,7 +22,6 @@ body{
   height: 1px;
   padding: 0px;
   overflow:hidden;
-  border-width: -1px;
 }
 .container{
   width: min(90vw, 800px);
