@@ -165,6 +165,7 @@ td.expense{
   align-items: center;
   opacity: 0;
   visibility: hidden;
+  z-index: 5;
 }
 .modal-overlay.active{
   opacity: 1;
