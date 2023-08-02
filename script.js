@@ -1,4 +1,4 @@
-Modal = {
+const Modal = {
   open(){
     document.querySelector('.modal-overlay').classList.add('active')
   },
@@ -7,38 +7,42 @@ Modal = {
   }
 }
 
-
-const transactions = [
-  {
-    id: 1,
-    description:'Luz',
-    amount:-50085,
-    date:'23/08/2023'
-  },
-  {
-    id: 2,
-    description:'Criação de Site',
-    amount:500055,
-    date:'23/08/2023'
-  },
-  {
-    id: 3,
-    description:'Internet',
-    amount:-28013,
-    date:'23/08/2023'
-  },
-  {
-    id: 4,
-    description:'Aplicativo',
-    amount:380586,
-    date:'23/08/2023'
-  }
-]
-
 const Transaction = {
+  all: [
+    {
+      description:'Luz',
+      amount:-50085,
+      date:'23/08/2023'
+    },
+    {
+      description:'Criação de Site',
+      amount:500055,
+      date:'23/08/2023'
+    },
+    {
+      description:'Internet',
+      amount:-28013,
+      date:'23/08/2023'
+    },
+    {
+      description:'Aplicativo',
+      amount:380586,
+      date:'23/08/2023'
+    }
+  ],
+  add(transaction){
+    Transaction.all.push(transaction)
+
+    App.reload()
+  },
+
+  remove(index){
+    Transaction.all.splice(index, 1)
+    App.reload()
+  },
   incomes(){
     let income = 0;
-    transactions.forEach(transaction => {
+    Transaction.all.forEach(transaction => {
       if(transaction.amount > 0){
         income += transaction.amount;
       }
@@ -47,13 +51,13 @@ const Transaction = {
   }, 
   expenses(){  
     let expense = 0;
-    transactions.forEach(transaction => {
+    Transaction.all.forEach(transaction => {
       if(transaction.amount < 0){
         expense += transaction.amount;
       }
     })
     return expense;    
-    return "Girosan"
+    
   },
   total(){
     return Transaction.incomes() + Transaction.expenses();
@@ -63,8 +67,8 @@ const Transaction = {
 const DOM = {
   transactionsContainer: document.querySelector('#data-table tbody'),
 
-  addTrasaction(transaction, index){
-    console.log(transaction)
+  addTransaction(transaction, index){
+    
     const tr = document.createElement('tr')
     tr.innerHTML = DOM.innerHTMLTransaction(transaction)
 
@@ -92,10 +96,25 @@ const DOM = {
     document.getElementById('incomeDisplay').innerHTML= Utils.formatCurrancy(Transaction.incomes());
     document.getElementById('expenseDisplay').innerHTML=Utils.formatCurrancy(Transaction.expenses())
     document.getElementById('totalDisplay').innerHTML=Utils.formatCurrancy(Transaction.total())
+  },
+
+  clearTransactions(){
+    DOM.transactionsContainer.innerHTML = ""
   }
 }
 
 const Utils = {
+  formatAmount(value){
+    value = (Number(value)) * 100
+    return value    
+  },
+
+  formatDate(date){
+    const splittedDate = date.split("-")
+   return `${splittedDate[2]}/${splittedDate[1]}/${splittedDate[0]}`
+   
+  },
+
   formatCurrancy(value){
     const signal = Number(value) < 0 ? "- " : ""
 
@@ -113,8 +132,76 @@ const Utils = {
   }
 }
 
-transactions.forEach(function(transaction){
-  DOM.addTrasaction(transaction)
-})
+const Form = {
+  description: document.querySelector('input#description'),
+  amount: document.querySelector('input#amount'),
+  date: document.querySelector('input#date'),
 
-DOM.updateBalance()
+  getValues(){
+    return{
+      description: Form.description.value,
+      amount: Form.amount.value,
+      date: Form.date.value,
+    }
+  },
+
+  validateFields(){
+    const {description, amount, date}  = Form.getValues()
+    if(description.trim() === "" || amount.trim() === "" || date.trim() === ""){
+      throw new Error("Por favor, preencha todos os campos.")
+    }
+  },
+
+  formatValues(){
+    let {description, amount, date} = Form.getValues()
+
+    amount = Utils.formatAmount(amount)
+
+    date = Utils.formatDate(date)
+
+    return{
+      description,
+      amount,
+      date
+    } 
+  },
+
+  clearFields(){
+    Form.description.value = ""
+    Form.amount.value = ""
+    Form.date.value = ""
+  },
+
+
+  submit(event){
+    event.preventDefault()
+
+    try{
+      Form.validateFields()
+      const transaction = Form.formatValues()
+      Transaction.add(transaction)
+      Form.clearFields()
+      Modal.close()
+    }catch(error){
+      alert(error.message)
+    }   
+  }
+}
+
+const App = {
+  init(){
+    Transaction.all.forEach(transaction =>{
+      DOM.addTransaction(transaction)
+    })
+    
+    DOM.updateBalance()
+
+  },
+  reload(){
+    DOM.clearTransactions()
+    App.init()
+  },
+}
+
+App.init()
+
